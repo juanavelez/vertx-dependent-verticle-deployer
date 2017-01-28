@@ -1,0 +1,1 @@
+# vertx-verticle-dependent-deployer
