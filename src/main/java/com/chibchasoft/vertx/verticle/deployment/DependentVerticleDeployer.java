@@ -26,12 +26,15 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 
 /**
- * <p>Verticle that deploys other verticles which upon successful deployment of each verticle may
- * deploy zero or more dependent verticles (in sequence or parallel and so on).</p>
- * <p>If a verticle fails to deploy none of its dependent verticles are deployed and no more
- * deployments are carried out. This verticle completes the future passed to {@link #start(Future)}
- * only and if only ALL deployments (and their dependents) succeed. If any fails, the future passed
- * is also failed.</p>
+ * <p>Verticle that deploys other verticles which upon successful of themselves may deploy zero or
+ * more dependent verticles (and their dependents and so on).</p>
+ * <p>If a verticle fails to deploy, none of its dependent verticles are deployed, otherwise all
+ * its dependents are deployed at the same time (using either
+ * {@link io.vertx.core.Vertx#deployVerticle(String, Handler)} or {@link
+ * io.vertx.core.Vertx#deployVerticle(String, DeploymentOptions, Handler)}).</p>
+ * <p>The DependentVerticleDeployer completes the future passed to {@link #start(Future)}
+ * only and if only ALL deployments (and their dependents and so on) succeed. If any verticle
+ * fails to deploy, the future is failed.</p>
  * 
  * @see DependentsDeployment
  * @see DeploymentConfiguration

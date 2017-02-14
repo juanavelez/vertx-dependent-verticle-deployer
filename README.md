@@ -1,5 +1,5 @@
 # Vert.x Dependent Verticle Deployer
-An implementation of a Vert.x verticle that deploys other verticles and their dependents. This is useful when coordination is needed between several verticles, for example a verticle that serves pages which are populated by another verticle that depends on external resources cannot start until that dependent verticle makes sure that the resources are ready and therefore has successfully started.
+An implementation of a Vert.x verticle that deploys other verticles and their dependents. This is useful when coordination is needed between several verticles, for example a verticle that serves pages which are populated by another verticle that depends on external resources cannot start until the external resources verticle has successfully started.
 
 ## Components
 
@@ -7,11 +7,11 @@ The main driver of deployment is the DependentVerticleDeployer verticle.
 
 ### DependentVerticleDeployer
 
-This verticle is the main entry point and as such all it does is deploy one or more verticles and their dependents. Those verticles and their dependents may have their own `DeploymentOptions`. The information on what verticles to deploy, their dependents and DeploymentOptions are all encapsulated in a `DependentsDeployment` object.
+The DependentVerticleDeployer verticle is the main entry point and as such all it does is deploy one or more verticles and their dependents. Those verticles and their dependents may have their own `DeploymentOptions`. The information on what verticles to deploy, their dependents and DeploymentOptions are all encapsulated in a `DependentsDeployment` object.
 
-The DependentVerticleDeployer completes sucessfully its startFuture (`AbstractVerticle::start(Future<String> startFuture`) only when all its verticles (and their dependents and so on) have been successfully deployed.
+The DependentVerticleDeployer completes sucessfully its startFuture (`AbstractVerticle::start(Future<String> startFuture`) only when all  verticles (and their dependents and so on) have been successfully deployed. If any verticle fails to deploy, the startFuture is failed. Since the deployment of verticles is done "in parallel" (via `Vertx.deployVerticle(String, Handler)` or `Vertx.deployVerticle(String, DeploymentOptions, Handler)`), it is possible that even though the startFuture has failed, other verticle deployments could still be executing.
 
-**NOTE:** It is strongly suggested that the DependentVerticleDeployer be deployed as a single instance. The DependentVerticleDeployer is not to be intended to be deployed as multiple instances and its behaviour cannot be guaranteed if such action is taken. This is not to say that verticles in `DependentsDeployment` cannot be deployed as multiple instances.
+**NOTE:** It is strongly suggested that the DependentVerticleDeployer be deployed as a single instance. The DependentVerticleDeployer is not to be intended to be deployed as multiple instances and its behaviour is not guaranteed if such action is taken. This is not to say that verticles in `DependentsDeployment` cannot be deployed as multiple instances (via `DeploymentOptions.setInstances`).
 
 ### DependentsDeployment and DeploymentConfiguration
 
@@ -42,13 +42,20 @@ Configure the verticles to deploy (and their dependents) using both `DependentsD
         DependentsDeployment innerDepDeployment = new DependentsDeployment();
         innerDepDeployment.getConfigurations().add(dependentVerticleCfg);
 
+        // When "InitialVerticle" succeds its deployment, "TheDependentVerticle" needs to be deployed. 
         DeploymentConfiguration initialVerticleCfg = new DeploymentConfiguration();
         initialVerticleCfg.setName("InitialVerticle");
         // Add "TheDependentVerticle" DependentsDeployment as a dependent of "InitialVerticle"
         initialVerticleCfg.getDependents().add(innerDepDeployment);
+        
+        // The "OtherVerticle" has no dependents and can be deployed at the same time as the "InitialVerticle"
+        DeploymentConfiguration otherVerticleCfg = new DeploymentConfiguration();
+        otherVerticleCfg.setName("OtherVerticle");
 
+        initialVerticleCfg.getDependents().add(innerDepDeployment);
         DependentsDeployment dependentsDeployment = new DependentsDeployment();
         dependentsDeployment.getConfigurations().add(initialVerticleCfg);
+        dependentsDeployment.getConfigurations().add(otherVerticleCfg);
 ```
 
 Create a new `DependentVerticleDeployer` instance and set its `depedentsDeployment ` property using the previoulsy configured `DependentsDeployment` object and deploy it:
@@ -59,9 +66,10 @@ Create a new `DependentVerticleDeployer` instance and set its `depedentsDeployme
 
         Vertx.vertx().deployVerticle(dependentVerticle, ar -> {
             if (ar.failed()) {
-                LOG.warn("Failed to deploy " + dependentsDeployment, ar.cause());
+                LOG.warn("Failed to deploy " + dependentsDeployment.toJson().encode(), ar.cause());
             } else {
                 LOG.info("InitialVerticle DeploymentID=" + initialVerticleCfg.getDeploymentID());
+                LOG.info("OtherVerticle DeploymentID=" + otherVerticleCfg.getDeploymentID());
                 LOG.info("TheDependentVerticle DeploymentID=" + dependentVerticleCfg.getDeploymentID());
             }
         });
