@@ -1,4 +1,7 @@
 # Vert.x Dependent Verticle Deployer
+
+[![Build Status](https://travis-ci.org/juanavelez/vertx-dependent-verticle-deployer.svg?branch=master)](https://travis-ci.org/juanavelez/vertx-dependent-verticle-deployer)
+
 An implementation of a Vert.x verticle that deploys other verticles and their dependents. This is useful when coordination is needed between several verticles, for example a verticle that serves pages which are populated by another verticle that depends on external resources cannot start until the external resources verticle has successfully started.
 
 ## Components
