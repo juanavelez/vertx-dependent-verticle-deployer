@@ -29,7 +29,6 @@ import io.vertx.core.json.JsonObject;
 public class DeploymentConfiguration {
     private String                     name;
     private DeploymentOptions          deploymentOptions;
-    private String                     deploymentID;
     private List<DependentsDeployment> dependents = new ArrayList<>();
 
     Future<String>                     future     = Future.future();
@@ -76,40 +75,51 @@ public class DeploymentConfiguration {
 
     /**
      * Get the Deployment ID for this verticle
-     * @return The Deployment ID for this verticle
+     * @return The Deployment ID for this verticle, null if it has not been deployed yet or failed to deploy
      */
     public String getDeploymentID() {
-        return deploymentID;
-    }
-
-    /**
-     * Sets the Deployment ID for this verticle
-     * @param deploymentID The deployment ID
-     * @return a reference to this, so the API can be used fluently
-     */
-    public DeploymentConfiguration setDeploymentID(String deploymentID) {
-        this.deploymentID = deploymentID;
-        return this;
+        return future.result();
     }
 
     /**
      * Get the list of deployments which depend on the successful deployment of this
      * verticle.
-     * @return The list of deployments
+     * @return The (non-null) list of deployments
      */
     public List<DependentsDeployment> getDependents() {
         return dependents;
     }
 
     /**
-     * Set the list of deployments which depend on the successful deployment of this
-     * verticle.
-     * @param dependents The list of deployments
-     * @return a reference to this, so the API can be used fluently
+     * Has the deplomente completed? It's completed if it's either succeeded or failed.
+     * @return true if completed, false if not
      */
-    public DeploymentConfiguration setDependents(List<DependentsDeployment> dependents) {
-        this.dependents = dependents;
-        return this;
+    public boolean isComplete() {
+        return future.isComplete();
+    }
+
+    /**
+     * Did it succeed?
+     * @return true if it succeded or false otherwise 
+     */
+    public boolean succeeded() {
+        return future.succeeded();
+    }
+
+    /**
+     * Did it fail?
+     * @return true if it failed or false otherwise
+     */
+    public boolean failed() {
+        return future.failed();
+    }
+
+    /**
+     * A Throwable describing failure. This will be null if the deployment has not started or if it succeeded.
+     * @return the failure cause or null if the deployment has not started or if it succeeded
+     */
+    public Throwable failCause() {
+        return future.cause();
     }
 
     /**
@@ -128,8 +138,6 @@ public class DeploymentConfiguration {
     public void fromJson(JsonObject json) {
         if (json.getValue("name") instanceof String)
             setName((String) json.getValue("name"));
-        if (json.getValue("deploymentID") instanceof String)
-            setDeploymentID((String) json.getValue("deploymentID"));
         if (json.getValue("deploymentOptions") instanceof JsonObject) {
             setDeploymentOptions(new DeploymentOptions());
             DeploymentOptionsConverter.fromJson((JsonObject) json.getValue("deploymentOptions"), this.getDeploymentOptions());
@@ -152,8 +160,6 @@ public class DeploymentConfiguration {
     public JsonObject toJson() {
         JsonObject json = new JsonObject();
         json.put("name", name);
-        if (deploymentID != null)
-            json.put("deploymentId", deploymentID);
         if (deploymentOptions != null) {
             JsonObject depOptJson = new JsonObject();
             DeploymentOptionsConverter.toJson(deploymentOptions, depOptJson);
@@ -170,7 +176,9 @@ public class DeploymentConfiguration {
     @Override
     public String toString() {
         return "DeploymentConfiguration [name=" + name + ", deploymentOptions="
-               + deploymentOptions + ", deploymentID=" + deploymentID + ", dependents="
-               + dependents + "]";
+               + deploymentOptions + ", deploymentID=" + future.result() + ", dependents="
+               + dependents + ", isComplete=" + future.isComplete() + ", succeeded="
+               + future.succeeded() + ", failed=" + future.failed() + ", failCause="
+               + future.cause() + "]";
     }
 }

@@ -61,7 +61,9 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                              ar -> {
                                  assertTrue(ar.succeeded());
                                  assertNotNull(ar.result());
-                                 assertNotNull(testVerticleCfg.getDeploymentID());
+                                 assertTrue(testVerticleCfg.succeeded() &&
+                                            testVerticleCfg.failCause() == null &&
+                                            testVerticleCfg.getDeploymentID() != null);
                                  testComplete();
                              });
         await();
@@ -86,7 +88,9 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
         vertx.deployVerticle(dependentVerticle,
                              ar -> {
                                  assertFalse(ar.succeeded());
-                                 assertNull(iDontExistVerticleCfg.getDeploymentID());
+                                 assertTrue(iDontExistVerticleCfg.failed() &&
+                                            iDontExistVerticleCfg.failCause() != null &&
+                                            iDontExistVerticleCfg.getDeploymentID() == null);
                                  testComplete();
                              });
         await();
@@ -118,7 +122,9 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                              ar -> {
                                  assertTrue(ar.succeeded());
                                  assertNotNull(ar.result());
-                                 assertNotNull(testVerticleCfg.getDeploymentID());
+                                 assertTrue(testVerticleCfg.succeeded() &&
+                                            testVerticleCfg.failCause() == null &&
+                                            testVerticleCfg.getDeploymentID() != null);
                                  // The DependentVerticleDeployer and TestVerticle
                                  assertEquals(2, vertx.deploymentIDs().size());
                                  waitUntil(() -> deployCount.get() == 3);
@@ -157,8 +163,12 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                              ar -> {
                                  assertTrue(ar.succeeded());
                                  assertNotNull(ar.result());
-                                 assertNotNull(testVerticleCfg1.getDeploymentID());
-                                 assertNotNull(testVerticleCfg2.getDeploymentID());
+                                 assertTrue(testVerticleCfg1.succeeded() &&
+                                            testVerticleCfg1.failCause() == null &&
+                                            testVerticleCfg1.getDeploymentID() != null);
+                                 assertTrue(testVerticleCfg2.succeeded() &&
+                                            testVerticleCfg2.failCause() == null &&
+                                            testVerticleCfg2.getDeploymentID() != null);
                                  // The DependentVerticleDeployer and TestVerticle twice
                                  assertEquals(3, vertx.deploymentIDs().size());
                                  waitUntil(() -> deployCount.get() == 2);
@@ -191,8 +201,14 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
         vertx.deployVerticle(dependentVerticle,
                              ar -> {
                                  assertFalse(ar.succeeded());
-                                 assertNull(iDontExistVerticleCfg.getDeploymentID());
-                                 waitUntil(() -> testVerticleCfg.getDeploymentID() != null);
+                                 assertNull(ar.result());
+                                 assertTrue(iDontExistVerticleCfg.failed() &&
+                                            iDontExistVerticleCfg.failCause() != null &&
+                                            iDontExistVerticleCfg.failCause().toString().toLowerCase().contains("classnotfoundexception") &&
+                                            iDontExistVerticleCfg.getDeploymentID() == null);
+                                 waitUntil(() -> testVerticleCfg.succeeded() &&
+                                                 testVerticleCfg.failCause() == null &&
+                                                 testVerticleCfg.getDeploymentID() != null);
                                  testComplete();
                              });
         await();
@@ -222,8 +238,14 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
         vertx.deployVerticle(dependentVerticle,
                              ar -> {
                                  assertFalse(ar.succeeded());
-                                 assertNull(iDontExistVerticleCfg.getDeploymentID());
-                                 waitUntil(() -> testVerticleCfg.getDeploymentID() != null);
+                                 assertNull(ar.result());
+                                 assertTrue(iDontExistVerticleCfg.failed() &&
+                                            iDontExistVerticleCfg.failCause() != null &&
+                                            iDontExistVerticleCfg.failCause().toString().toLowerCase().contains("classnotfoundexception") &&
+                                            iDontExistVerticleCfg.getDeploymentID() == null);
+                                 waitUntil(() -> testVerticleCfg.succeeded() &&
+                                                 testVerticleCfg.failCause() == null &&
+                                                 testVerticleCfg.getDeploymentID() != null);
                                  testComplete();
                              });
         await();
@@ -256,7 +278,12 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                              ar -> {
                                  assertTrue(ar.succeeded());
                                  assertNotNull(ar.result());
-                                 waitUntil(() -> dependentTestVerticleCfg.getDeploymentID() != null);
+                                 assertTrue(dependentTestVerticleCfg.succeeded() &&
+                                            dependentTestVerticleCfg.failCause() == null &&
+                                            dependentTestVerticleCfg.getDeploymentID() != null);
+                                 assertTrue(testVerticleCfg.succeeded() &&
+                                            testVerticleCfg.failCause() == null &&
+                                            testVerticleCfg.getDeploymentID() != null);
                                  testComplete();
                              });
         await();
@@ -289,8 +316,14 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
         vertx.deployVerticle(dependentVerticle,
                              ar -> {
                                  assertFalse(ar.succeeded());
-                                 waitUntil(() -> testVerticleCfg.getDeploymentID() != null);
-                                 assertNull(iDontExistVerticleCfg.getDeploymentID());
+                                 assertNull(ar.result());
+                                 assertTrue(testVerticleCfg.succeeded() &&
+                                            testVerticleCfg.failCause() == null &&
+                                            testVerticleCfg.getDeploymentID() != null);
+                                 assertTrue(iDontExistVerticleCfg.failed() &&
+                                            iDontExistVerticleCfg.failCause() != null &&
+                                            iDontExistVerticleCfg.failCause().toString().toLowerCase().contains("classnotfoundexception") &&
+                                            iDontExistVerticleCfg.getDeploymentID() == null);
                                  testComplete();
                              });
         await();

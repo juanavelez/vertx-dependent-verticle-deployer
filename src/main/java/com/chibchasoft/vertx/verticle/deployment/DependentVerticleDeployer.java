@@ -99,11 +99,9 @@ public class DependentVerticleDeployer extends AbstractVerticle {
      */
     private CompositeFuture getCompositeFuture() {
         List<Future<String>> futures = new ArrayList<>();
-        if (dependentsDeployment.getConfigurations() != null) {
-            dependentsDeployment.getConfigurations().forEach(cfg -> {
-                futures.addAll(getFutures(cfg));
-            });
-        }
+        dependentsDeployment.getConfigurations().forEach(cfg -> {
+            futures.addAll(getFutures(cfg));
+        });
 
         return CompositeFuture.all(futures.stream().collect(Collectors.toList()));
     }
@@ -115,12 +113,10 @@ public class DependentVerticleDeployer extends AbstractVerticle {
     private List<Future<String>> getFutures(DeploymentConfiguration cfg) {
         List<Future<String>> futures = new ArrayList<>();
         futures.add(cfg.future);
-        if (cfg.getDependents() != null) {
-            for (DependentsDeployment dep : cfg.getDependents()) {
-                dep.getConfigurations().forEach(config -> {
-                    futures.addAll(getFutures(config));
-                });
-            }
+        for (DependentsDeployment dep : cfg.getDependents()) {
+            dep.getConfigurations().forEach(config -> {
+                futures.addAll(getFutures(config));
+            });
         }
         return futures;
     }
@@ -149,12 +145,9 @@ public class DependentVerticleDeployer extends AbstractVerticle {
             logger.debug("deploying " + verticleName);
         Handler<AsyncResult<String>> deploymentHandler = res -> {
             if (res.succeeded()) {
-                config.setDeploymentID(res.result());
                 config.future.complete(res.result());
-                if (config.getDependents() != null) {
-                    for (DependentsDeployment dep : config.getDependents()) {
-                        deployVerticles(dep);
-                    }
+                for (DependentsDeployment dep : config.getDependents()) {
+                    deployVerticles(dep);
                 }
             } else {
                 config.future.fail(res.cause());

@@ -18,9 +18,13 @@ The DependentVerticleDeployer completes sucessfully its startFuture (`AbstractVe
 
 ### DependentsDeployment and DeploymentConfiguration
 
-The `DependentsDeployment` is an object encapsulating one or more `DeploymentConfiguration` objects, which itself is an encapsulation of the name of the verticle (including any prefixes) to deploy, any deployment options for such verticle and the list of (any) dependents to deploy. Each `DeploymentConfiguration` object also includes the DeploymentID assigned by Vertx upon successful deployment.
+The `DependentsDeployment` is an object encapsulating one or more `DeploymentConfiguration` objects (`List<DeplopymentConfiguration> getConfigurations()`).
 
-Both `DependentsDeployment` and `DeploymentConfiguration` provide a way to create such objects from a JsonObject (`DependentsDeployment::fromJson` and `DeploymentConfiguration::fromJson`) as well as create a JsonObject from themselves (`DependentsDeployment::toJson` and `DeploymentConfiguration::toJson`).
+The `DeploymentConfiguration` itself is an encapsulation of the name of the verticle (including any prefixes) to deploy (`String getName(), setName(String)`), any deployment options for such verticle (`DeploymentOptions getDeploymentOptions(), setDeploymentOptions(DeploymentOptions)`) and the list of (any) dependents to deploy (`List<DependentsDeployment> getDependents()`).
+
+Each `DeploymentConfiguration` object also includes the DeploymentID assigned by Vertx upon successful deployment (`String getDeploymentID()`) as well as methods to indicate completion, success, failure and cause of failure (`boolean isComplete(), boolean sucess(), boolean failed(), Throwable failCause()`).
+
+Both `DependentsDeployment` and `DeploymentConfiguration` provide a way to create such objects from a `JsonObject` (`DependentsDeployment::fromJson` and `DeploymentConfiguration::fromJson`) as well as to obtain `JsonObject`s from themselves (`DependentsDeployment::toJson` and `DeploymentConfiguration::toJson`).
 
 ## Usage ##
 

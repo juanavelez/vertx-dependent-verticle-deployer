@@ -50,21 +50,11 @@ public class DependentsDeployment {
     }
 
     /**
-     * Returns the list of {@link DeploymentConfiguration}s
-     * @return The list of {@link DeploymentConfiguration}s
+     * Returns the (non-null) list of {@link DeploymentConfiguration}s
+     * @return The (non-null) list of {@link DeploymentConfiguration}s
      */
     public List<DeploymentConfiguration> getConfigurations() {
         return configurations;
-    }
-
-    /**
-     * Sets the list of {@link DeploymentConfiguration}s
-     * @param configurations The list of {@link DeploymentConfiguration}s
-     * @return a reference to this, so the API can be used fluently
-     */
-    public DependentsDeployment setConfigurations(List<DeploymentConfiguration> configurations) {
-        this.configurations = configurations;
-        return this;
     }
 
     /**
@@ -95,5 +85,12 @@ public class DependentsDeployment {
             json.put("configurations", array);
         }
         return json;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("DependentsDeployment [configurations=").append(configurations).append("]");
+        return builder.toString();
     }
 }
