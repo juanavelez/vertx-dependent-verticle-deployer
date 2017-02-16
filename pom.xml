@@ -20,7 +20,7 @@
 
   <groupId>com.chibchasoft</groupId>
   <artifactId>vertx-dependent-verticle-deployer</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <name>Vert.x Dependent Verticle Deployer</name>
   <description>A Vert.x Verticle intended to deploy verticles that depend on other verticles</description>

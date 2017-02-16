@@ -28,13 +28,15 @@ Both `DependentsDeployment` and `DeploymentConfiguration` provide a way to creat
 
 ## Usage ##
 
+Vert.x Dependent Verticle Deployer is published to the [maven public repo](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.chibchasoft%22%20AND%20a%3A%22vertx-dependent-verticle-deployer%22).
+
 Add the vertx-dependent-verticle-deployer dependency to your project, in case of maven like this:
 
 ```xml
         <dependency>
             <groupId>com.chibchasoft</groupId>
             <artifactId>vertx-dependent-verticle-deployer</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 ```
  
