@@ -122,7 +122,7 @@ public class DependentVerticleDeployer extends AbstractVerticle {
     }
 
     /**
-     * Deployes each of the verticles found in the DependentsDeployment object
+     * Deploys each of the verticles found in the DependentsDeployment object
      * @param depDeployment The DependentsDeployment object
      */
     private void deployVerticles(DependentsDeployment depDeployment) {

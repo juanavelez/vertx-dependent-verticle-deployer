@@ -14,6 +14,7 @@ package com.chibchasoft.vertx.verticle.deployment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.json.JsonArray;
@@ -46,6 +47,7 @@ public class DependentsDeployment {
      * @param json  the JSON
      */
     public DependentsDeployment(JsonObject json) {
+        Objects.requireNonNull(json, "json is required");
         fromJson(json);
     }
 
@@ -62,6 +64,7 @@ public class DependentsDeployment {
      * @param json The JSON Object
      */
     public void fromJson(JsonObject json) {
+        Objects.requireNonNull(json, "json is required");
         if (json.getValue("configurations") instanceof JsonArray) {
             json.getJsonArray("configurations").forEach(item -> {
                 if (item instanceof JsonObject) {

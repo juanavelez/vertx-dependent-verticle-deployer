@@ -36,7 +36,7 @@ Add the vertx-dependent-verticle-deployer dependency to your project, in case of
         <dependency>
             <groupId>com.chibchasoft</groupId>
             <artifactId>vertx-dependent-verticle-deployer</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 ```
  

@@ -14,6 +14,7 @@ package com.chibchasoft.vertx.verticle.deployment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.DeploymentOptionsConverter;
@@ -51,6 +52,7 @@ public class DeploymentConfiguration {
      * @return a reference to this, so the API can be used fluently
      */
     public DeploymentConfiguration setName(String name) {
+        Objects.requireNonNull(name, "Name is required");
         this.name = name;
         return this;
     }
@@ -69,6 +71,7 @@ public class DeploymentConfiguration {
      * @return a reference to this, so the API can be used fluently
      */
     public DeploymentConfiguration setDeploymentOptions(DeploymentOptions deploymentOptions) {
+        Objects.requireNonNull(deploymentOptions, "deploymentOptions is required");
         this.deploymentOptions = deploymentOptions;
         return this;
     }
@@ -91,7 +94,7 @@ public class DeploymentConfiguration {
     }
 
     /**
-     * Has the deplomente completed? It's completed if it's either succeeded or failed.
+     * Has the deployments completed? It's completed if it's either succeeded or failed.
      * @return true if completed, false if not
      */
     public boolean isComplete() {
@@ -100,7 +103,7 @@ public class DeploymentConfiguration {
 
     /**
      * Did it succeed?
-     * @return true if it succeded or false otherwise 
+     * @return true if it succeeded or false otherwise 
      */
     public boolean succeeded() {
         return future.succeeded();
@@ -136,6 +139,7 @@ public class DeploymentConfiguration {
      * @param json The JSON Object
      */
     public void fromJson(JsonObject json) {
+        Objects.requireNonNull(json, "json is required");
         if (json.getValue("name") instanceof String)
             setName((String) json.getValue("name"));
         if (json.getValue("deploymentOptions") instanceof JsonObject) {
