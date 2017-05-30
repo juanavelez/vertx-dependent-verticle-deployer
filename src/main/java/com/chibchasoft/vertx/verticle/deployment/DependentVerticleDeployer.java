@@ -14,8 +14,8 @@ package com.chibchasoft.vertx.verticle.deployment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import io.vertx.core.DeploymentOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,11 +99,9 @@ public class DependentVerticleDeployer extends AbstractVerticle {
      */
     private CompositeFuture getCompositeFuture() {
         List<Future<String>> futures = new ArrayList<>();
-        dependentsDeployment.getConfigurations().forEach(cfg -> {
-            futures.addAll(getFutures(cfg));
-        });
+        dependentsDeployment.getConfigurations().forEach(cfg -> futures.addAll(getFutures(cfg)));
 
-        return CompositeFuture.all(futures.stream().collect(Collectors.toList()));
+        return CompositeFuture.all(new ArrayList<>(futures));
     }
 
     /**
@@ -114,9 +112,7 @@ public class DependentVerticleDeployer extends AbstractVerticle {
         List<Future<String>> futures = new ArrayList<>();
         futures.add(cfg.future);
         for (DependentsDeployment dep : cfg.getDependents()) {
-            dep.getConfigurations().forEach(config -> {
-                futures.addAll(getFutures(config));
-            });
+            dep.getConfigurations().forEach(config -> futures.addAll(getFutures(config)));
         }
         return futures;
     }
@@ -127,9 +123,7 @@ public class DependentVerticleDeployer extends AbstractVerticle {
      */
     private void deployVerticles(DependentsDeployment depDeployment) {
         if (depDeployment != null && !depDeployment.getConfigurations().isEmpty()) {
-            depDeployment.getConfigurations().forEach(cfg -> {
-                deployConfiguration(cfg);
-            });
+            depDeployment.getConfigurations().forEach(this::deployConfiguration);
         }
     }
  
