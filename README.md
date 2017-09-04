@@ -1,6 +1,8 @@
 # Vert.x Dependent Verticle Deployer
 
 [![Build Status](https://travis-ci.org/juanavelez/vertx-dependent-verticle-deployer.svg?branch=master)](https://travis-ci.org/juanavelez/vertx-dependent-verticle-deployer)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.chibchasoft/vertx-dependent-verticle-deployer/badge.svg)](https://search.maven.org/#search%7Cga%7C1%7Ccom.chibchasoft.vertx-dependent-verticle-deployer)
+[![codecov](https://codecov.io/gh/juanavelez/vertx-dependent-verticle-deployer/branch/master/graph/badge.svg)](https://codecov.io/gh/juanavelez/vertx-dependent-verticle-deployer)
 
 An implementation of a Vert.x verticle that deploys other verticles and their dependents. This is useful when coordination is needed between several verticles, for example a verticle that serves pages which are populated by another verticle that depends on external resources cannot start until the external resources verticle has successfully started.
 
@@ -39,7 +41,8 @@ Add the vertx-dependent-verticle-deployer dependency to your project, in case of
             <version>1.0.2-SNAPSHOT</version>
         </dependency>
 ```
- 
+where VERSION is [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.chibchasoft/vertx-dependent-verticle-deployer/badge.svg)](https://search.maven.org/#search%7Cga%7C1%7Ccom.chibchasoft.vertx-dependent-verticle-deployer)
+
 Configure the verticles to deploy (and their dependents) using both `DependentsDeployment` and `DeploymentConfiguration`:
 
 ```java

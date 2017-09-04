@@ -14,6 +14,8 @@ package com.chibchasoft.vertx.verticle.deployment;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import org.junit.Test;
 
 import io.vertx.core.DeploymentOptions;
@@ -43,6 +45,37 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
     }
 
     /**
+     * In this test, the DependentVerticleDeployer deploys a single verticle that has no dependents.
+     * Configuration via Json
+     */
+    @Test
+    public void testOneVerticleWithNoDependentsUsingJson() {
+        JsonObject config = new JsonObject();
+        config.put("dependents", new JsonArray());
+        config.put("name", TestVerticle.class.getCanonicalName());
+        JsonArray configurations = new JsonArray();
+        configurations.add(config);
+        JsonObject depDeploymentAsJson = new JsonObject();
+        depDeploymentAsJson.put("configurations", configurations);
+        DependentsDeployment depDeployment = new DependentsDeployment(depDeploymentAsJson);
+
+        DependentVerticleDeployer dependentVerticle = new DependentVerticleDeployer();
+        dependentVerticle.setDependentsDeployment(depDeployment);
+
+        vertx.deployVerticle(dependentVerticle,
+                ar -> {
+                    assertTrue(ar.succeeded());
+                    assertNotNull(ar.result());
+                    DeploymentConfiguration testVerticleCfg = depDeployment.getConfigurations().get(0);
+                    assertTrue(testVerticleCfg.succeeded() &&
+                            testVerticleCfg.failCause() == null &&
+                            testVerticleCfg.getDeploymentID() != null);
+                    testComplete();
+                });
+        await();
+    }
+
+    /**
      * In this test, the DependentVerticleDeployer deploys a single verticle that has no dependents
      */
     @Test
@@ -67,7 +100,7 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                                  testComplete();
                              });
         await();
-    };
+    }
 
     /**
      * In this test, the DependentVerticleDeployer deploys a single non-existent verticle that
@@ -94,7 +127,7 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                                  testComplete();
                              });
         await();
-    };
+    }
 
     /**
      * In this test, the DependentVerticleDeployer deploys a single verticle with several instances
@@ -114,9 +147,7 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
         dependentVerticle.setDependentsDeployment(depDeployment);
 
         AtomicInteger deployCount = new AtomicInteger();
-        vertx.eventBus().consumer("TestVerticleStarted", m -> {
-            deployCount.incrementAndGet();
-        });
+        vertx.eventBus().consumer("TestVerticleStarted", m -> deployCount.incrementAndGet());
 
         vertx.deployVerticle(dependentVerticle,
                              ar -> {
@@ -131,7 +162,7 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                                  testComplete();
                              });
         await();
-    };
+    }
 
     /**
      * In this test, the DependentVerticleDeployer deploys the same verticle twice but none
@@ -155,9 +186,7 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
         dependentVerticle.setDependentsDeployment(depDeployment);
 
         AtomicInteger deployCount = new AtomicInteger();
-        vertx.eventBus().consumer("TestVerticleStarted", m -> {
-            deployCount.incrementAndGet();
-        });
+        vertx.eventBus().consumer("TestVerticleStarted", m -> deployCount.incrementAndGet());
 
         vertx.deployVerticle(dependentVerticle,
                              ar -> {
@@ -175,7 +204,7 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                                  testComplete();
                              });
         await();
-    };
+    }
 
     /**
      * In this test, the DependentVerticleDeployer deploys two verticles (each with no dependents)
@@ -212,7 +241,7 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                                  testComplete();
                              });
         await();
-    };
+    }
 
     /**
      * In this test, the DependentVerticleDeployer deploys two verticles (each with no dependents)
@@ -249,7 +278,7 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                                  testComplete();
                              });
         await();
-    };
+    }
 
     /**
      * In this test, the DependentVerticleDeployer deploys a single verticle that has one dependent
@@ -287,7 +316,7 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                                  testComplete();
                              });
         await();
-    };
+    }
 
     /**
      * In this test, the DependentVerticleDeployer deploys a single verticle that has one dependent
@@ -327,5 +356,5 @@ public class DependentVerticleDeployerTest extends VertxTestBase {
                                  testComplete();
                              });
         await();
-    };
+    }
 }
