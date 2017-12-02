@@ -42,7 +42,7 @@ import io.vertx.core.Handler;
  * @author <a href="mailto:jvelez@chibchasoft.com">Juan Velez</a> 
  */
 public class DependentVerticleDeployer extends AbstractVerticle {
-    private final Logger         logger               = LoggerFactory.getLogger(this.getClass());
+    private static final Logger  LOGGER               = LoggerFactory.getLogger(DependentVerticleDeployer.class);
     private DependentsDeployment dependentsDeployment = null;
 
     public DependentVerticleDeployer() {
@@ -82,7 +82,7 @@ public class DependentVerticleDeployer extends AbstractVerticle {
     private void deployDependentsDeployment(Future<Void> startFuture) {
         getCompositeFuture().setHandler(ar -> {
             if (ar.failed()) {
-                logger.warn("One or more verticles failed to deploy", ar.cause());
+                LOGGER.warn("One or more verticles failed to deploy", ar.cause());
                 startFuture.fail(ar.cause());
             } else {
                 startFuture.complete();
@@ -135,8 +135,8 @@ public class DependentVerticleDeployer extends AbstractVerticle {
      */
     private void deployConfiguration(DeploymentConfiguration config) {
         String verticleName = config.getName();
-        if (logger.isDebugEnabled())
-            logger.debug("deploying " + verticleName);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("deploying " + verticleName);
         Handler<AsyncResult<String>> deploymentHandler = res -> {
             if (res.succeeded()) {
                 config.future.complete(res.result());
@@ -145,7 +145,7 @@ public class DependentVerticleDeployer extends AbstractVerticle {
                 }
             } else {
                 config.future.fail(res.cause());
-                logger.warn("deploying verticle " + verticleName + " failed", res.cause());
+                LOGGER.warn("deploying verticle " + verticleName + " failed", res.cause());
             }
         };
 
