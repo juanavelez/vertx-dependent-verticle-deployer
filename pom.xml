@@ -20,7 +20,7 @@
 
   <groupId>com.chibchasoft</groupId>
   <artifactId>vertx-dependent-verticle-deployer</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
 
   <name>Vert.x Dependent Verticle Deployer</name>
   <description>A Vert.x Verticle intended to deploy verticles that depend on other verticles</description>
@@ -65,7 +65,7 @@
     <log4j2.version>2.6.2</log4j2.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <vertx.core.version>3.3.3</vertx.core.version>
+    <vertx.core.version>3.6.2</vertx.core.version>
     <slf4j.version>1.7.21</slf4j.version>
   </properties>
 

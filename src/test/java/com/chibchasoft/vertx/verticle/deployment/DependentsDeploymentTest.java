@@ -44,8 +44,8 @@ public class DependentsDeploymentTest {
         DependentsDeployment depDeployment = new DependentsDeployment(depDeploymentAsJson);
 
         assertTrue(depDeployment.getConfigurations() != null && depDeployment.getConfigurations().size() == 1);
-        assertTrue(depDeployment.getConfigurations().get(0).getName().equals(TestVerticle.class.getCanonicalName()));
-        assertTrue(depDeployment.getConfigurations().get(0).getDependents().size()==0);
+        assertEquals(depDeployment.getConfigurations().get(0).getName(), TestVerticle.class.getCanonicalName());
+        assertEquals(0, depDeployment.getConfigurations().get(0).getDependents().size());
     }
 
     @Test

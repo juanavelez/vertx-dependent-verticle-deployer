@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 
 import io.vertx.core.DeploymentOptions;
-import io.vertx.core.DeploymentOptionsConverter;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -143,8 +142,7 @@ public class DeploymentConfiguration {
         if (json.getValue("name") instanceof String)
             setName((String) json.getValue("name"));
         if (json.getValue("deploymentOptions") instanceof JsonObject) {
-            setDeploymentOptions(new DeploymentOptions());
-            DeploymentOptionsConverter.fromJson((JsonObject) json.getValue("deploymentOptions"), this.getDeploymentOptions());
+            setDeploymentOptions(new DeploymentOptions((JsonObject) json.getValue("deploymentOptions")));
         }
         if (json.getValue("dependents") instanceof JsonArray) {
             json.getJsonArray("dependents").forEach(item -> {
@@ -165,8 +163,7 @@ public class DeploymentConfiguration {
         JsonObject json = new JsonObject();
         json.put("name", name);
         if (deploymentOptions != null) {
-            JsonObject depOptJson = new JsonObject();
-            DeploymentOptionsConverter.toJson(deploymentOptions, depOptJson);
+            JsonObject depOptJson = deploymentOptions.toJson();
             json.put("deploymentOptions", depOptJson);
         }
         if (this.getDependents() != null) {
